@@ -5,6 +5,8 @@ const wpHost = process.env.WP_BASE ? new URL(process.env.WP_BASE).hostname : 'ba
 const nextConfig: NextConfig = {
 	// Browser preview proxies via 127.0.0.1 — allow dev resources cross-origin
 	allowedDevOrigins: ['127.0.0.1', 'localhost'],
+	// hide the dev-tools 'N' badge bottom-left (dev only — never shipped to prod)
+	devIndicators: false,
 	images: {
 		// barelyn.local resolves to 127.0.0.1 — required in dev
 		dangerouslyAllowLocalIP: true,

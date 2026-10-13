@@ -40,12 +40,21 @@ export default async function HomePage() {
 			{/* ── HERO — full-bleed editorial ── */}
 			<section className="relative min-h-[70svh] md:min-h-[88svh] flex items-center overflow-hidden">
 				<Image
+					src="/wp-uploads/2026/03/2560-by-1244-1-mobile.jpg"
+					unoptimized
+					alt=""
+					fill
+					priority
+					className="object-cover object-center md:hidden"
+					sizes="100vw"
+				/>
+				<Image
 					src="/wp-uploads/2026/03/2560-by-1244-1.png"
 					unoptimized
 					alt=""
 					fill
 					priority
-					className="object-cover"
+					className="object-cover object-center hidden md:block"
 					sizes="100vw"
 				/>
 				<div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
@@ -102,18 +111,26 @@ export default async function HomePage() {
 
 			{/* ── PHILOSOPHY (Odyssée-style split) ── */}
 			<section className="border-y border-sand">
-				<div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-2 items-stretch">
-					<div className="relative min-h-[320px] lg:min-h-[540px] overflow-hidden">
+				<div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] items-stretch">
+					<div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[520px] overflow-hidden">
+						<Image
+							src="/wp-uploads/2026/03/2560-by-1244-1-mobile.jpg"
+							unoptimized
+							alt="Barelyn skincare ritual"
+							fill
+							sizes="(max-width:1024px) 100vw, 50vw"
+							className="object-cover object-center lg:hidden"
+						/>
 						<Image
 							src="/wp-uploads/2026/03/2560-by-1244-1.png"
 							unoptimized
 							alt="Barelyn skincare ritual"
 							fill
 							sizes="(max-width:1024px) 100vw, 50vw"
-							className="object-cover"
+							className="object-cover object-center hidden lg:block"
 						/>
 					</div>
-					<div className="flex flex-col justify-center px-6 md:px-14 py-14 md:py-20 bg-warm">
+					<div className="flex flex-col justify-center px-5 md:px-10 lg:pl-12 lg:pr-10 py-12 md:py-16 bg-warm">
 						<Reveal>
 							<p className="eyebrow mb-5">The Barelyn Standard</p>
 							<h2 className="h-display text-[30px] md:text-[44px] text-ink">

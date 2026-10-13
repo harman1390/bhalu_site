@@ -53,7 +53,7 @@ export default function ScrollChevron({ top = '50%', inset = '1.25rem' }: { top?
 				className={`${chip} ${atStart ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
 			>
 				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-					<path d="M15 5l-7 7-7 7" />
+					<path d="M15 19l-7-7 7-7" />
 				</svg>
 			</button>
 			<button
