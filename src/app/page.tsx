@@ -38,7 +38,7 @@ export default async function HomePage() {
 	return (
 		<>
 			{/* ── HERO — full-bleed editorial ── */}
-			<section className="relative min-h-[78svh] md:min-h-[88svh] flex items-center overflow-hidden">
+			<section className="relative min-h-[70svh] md:min-h-[88svh] flex items-center overflow-hidden">
 				<Image
 					src="/wp-uploads/2026/03/2560-by-1244-1.png"
 					unoptimized
@@ -56,7 +56,7 @@ export default async function HomePage() {
 							Clean Skincare · Made in India
 						</p>
 						<h1
-							className="h-display text-[44px] md:text-[76px] text-white"
+							className="h-display text-[38px] md:text-[76px] text-white"
 							style={{ textShadow: '0 2px 34px rgba(0,0,0,.4)' }}
 						>
 							Skincare, elevated to <em className="font-medium">an art.</em>

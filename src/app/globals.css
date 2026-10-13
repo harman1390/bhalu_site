@@ -18,11 +18,25 @@
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   background: var(--color-ivory);
   color: var(--color-ink);
+}
+
+/* iOS Safari zooms focused inputs under 16px — bump on phones only */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* ---------- editorial type utilities ---------- */

@@ -62,7 +62,7 @@ export default function SiteHeader() {
 				<div
 					className={`bg-ivory/95 backdrop-blur-sm border-b transition-shadow duration-300 ${scrolled ? 'border-sand shadow-[0_2px_18px_rgba(25,22,19,0.06)]' : 'border-transparent'}`}
 				>
-				<div className="max-w-[1360px] mx-auto px-6 flex items-center justify-between gap-6 py-4">
+				<div className="max-w-[1360px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 py-3.5 sm:py-4">
 					{/* logo */}
 					<Link href="/" className="shrink-0">
 						<Image
@@ -72,6 +72,7 @@ export default function SiteHeader() {
 							height={34}
 							priority
 							unoptimized
+							className="w-[112px] sm:w-[140px] h-auto"
 						/>
 					</Link>
 
@@ -111,7 +112,7 @@ export default function SiteHeader() {
 
 				{/* mobile nav */}
 				{menuOpen && (
-					<nav className="lg:hidden bg-ivory border-t border-sand px-6 py-5 grid grid-cols-2 gap-x-4 gap-y-3">
+					<nav className="lg:hidden bg-ivory border-t border-sand px-4 sm:px-6 py-5 grid grid-cols-2 gap-x-4 gap-y-3">
 						{[{ label: 'Shop All', slug: '' }, ...CATS].map((c) => (
 							<Link
 								key={c.slug || 'all'}

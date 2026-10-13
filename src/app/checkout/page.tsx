@@ -201,9 +201,9 @@ export default function CheckoutPage() {
 	}
 
 	return (
-		<div className="max-w-[1280px] mx-auto px-6 py-12 md:py-16">
+		<div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-10 md:py-16">
 			<p className="eyebrow mb-3">Almost There</p>
-			<h1 className="h-display text-[36px] md:text-[44px] text-ink mb-10">Checkout</h1>
+			<h1 className="h-display text-[32px] md:text-[44px] text-ink mb-8 md:mb-10">Checkout</h1>
 
 			{items.length === 0 ? (
 				<p className="text-muted">
@@ -213,14 +213,14 @@ export default function CheckoutPage() {
 				<form onSubmit={placeOrder} className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
 					<div className="space-y-4">
 						<h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">Billing & Shipping</h2>
-						<div className="grid grid-cols-2 gap-3">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 							<input required placeholder="First name" value={form.first_name} onChange={set('first_name')} className="border border-border bg-white rounded-[8px] px-4 py-3.5 text-[14px] w-full" />
 							<input required placeholder="Last name" value={form.last_name} onChange={set('last_name')} className="border border-border bg-white rounded-[8px] px-4 py-3.5 text-[14px] w-full" />
 						</div>
 						<input required type="email" placeholder="Email" value={form.email} onChange={set('email')} className="border border-border bg-white rounded-[8px] px-4 py-3.5 text-[14px] w-full" />
 						<input required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={set('phone')} className="border border-border bg-white rounded-[8px] px-4 py-3.5 text-[14px] w-full" />
 						<input required placeholder="Address" value={form.address_1} onChange={set('address_1')} className="border border-border bg-white rounded-[8px] px-4 py-3.5 text-[14px] w-full" />
-						<div className="grid grid-cols-3 gap-3">
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 							<div className="relative">
 								<input
 									required
@@ -267,7 +267,7 @@ export default function CheckoutPage() {
 						{err && <p className="text-[13px] text-[#ff5a52] font-medium">{err}</p>}
 					</div>
 
-					<aside className="bg-white border border-sand rounded-[14px] p-7 lg:sticky lg:top-24">
+					<aside className="bg-white border border-sand rounded-[14px] p-5 sm:p-7 lg:sticky lg:top-24">
 						<h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink mb-5">Your Order</h2>
 						{items.map((it) => (
 							<div key={it.key} className="flex justify-between text-[13px] py-1.5">

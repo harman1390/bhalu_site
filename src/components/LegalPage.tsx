@@ -7,9 +7,9 @@ interface Section {
 
 export default function LegalPage({ eyebrow, title, intro, sections }: { eyebrow: string; title: string; intro: string[]; sections: Section[] }) {
 	return (
-		<div className="max-w-[820px] mx-auto px-6 py-12 md:py-16">
+		<div className="max-w-[820px] mx-auto px-4 sm:px-6 py-10 md:py-16">
 			<p className="eyebrow mb-3">{eyebrow}</p>
-			<h1 className="h-display text-[36px] md:text-[44px] text-ink mb-8">{title}</h1>
+			<h1 className="h-display text-[32px] md:text-[44px] text-ink mb-8">{title}</h1>
 
 			<div className="space-y-4 mb-12">
 				{intro.map((p, i) => (

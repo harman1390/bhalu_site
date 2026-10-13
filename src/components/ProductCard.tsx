@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: WCProduct }) {
 
 	return (
 		<div className="bg-white border border-sand rounded-[14px] overflow-hidden transition-all duration-300 hover:border-terracotta/50 group">
-			<Link href={`/product/${product.slug}`} className="block relative m-2 h-[280px] img-shell overflow-hidden rounded-[10px] bg-blush">
+			<Link href={`/product/${product.slug}`} className="block relative m-1.5 sm:m-2 h-[150px] sm:h-[190px] md:h-[280px] img-shell overflow-hidden rounded-[10px] bg-blush">
 				{img && (
 					<Image
 						src={wpImg(img.src)}
@@ -57,7 +57,7 @@ export default function ProductCard({ product }: { product: WCProduct }) {
 					/>
 				)}
 				{onSale && (
-					<span className="absolute top-3 left-3 bg-ink text-ivory text-[10px] font-medium uppercase tracking-[0.14em] px-3 py-1.5">
+					<span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-ink text-ivory text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.14em] px-2 py-1 sm:px-3 sm:py-1.5">
 						{pctOff > 0 ? `${pctOff}% Off` : 'Sale'}
 					</span>
 				)}
@@ -68,19 +68,19 @@ export default function ProductCard({ product }: { product: WCProduct }) {
 					</span>
 				)}
 			</Link>
-			<div className="px-5 pt-3 pb-5">
+			<div className="px-2.5 pt-2 pb-3 sm:px-4 sm:pt-3 sm:pb-4 md:px-5 md:pb-5">
 				<Link
 					href={`/product/${product.slug}`}
-					className="block font-serif text-[17px] leading-[1.3] font-medium text-ink hover:text-terracotta transition-colors mb-1.5 line-clamp-2 min-h-[44px]"
+					className="block font-serif text-[13.5px] sm:text-[15px] md:text-[17px] leading-[1.3] font-medium text-ink hover:text-terracotta transition-colors mb-1 sm:mb-1.5 line-clamp-2 min-h-[36px] sm:min-h-[40px] md:min-h-[44px]"
 				>
 					{product.name}
 				</Link>
-				<div className="flex items-baseline gap-2 mb-4">
-					<span className="text-[14px] font-medium tracking-[0.02em] text-ink">
+				<div className="flex items-baseline gap-1.5 sm:gap-2 mb-2.5 sm:mb-4">
+					<span className="text-[12.5px] sm:text-[14px] font-medium tracking-[0.02em] text-ink">
 						{formatPrice(onSale ? product.prices.sale_price : product.prices.price, product.prices.currency_symbol, decimals)}
 					</span>
 					{onSale && (
-						<del className="text-[12.5px] text-muted">
+						<del className="text-[11px] sm:text-[12.5px] text-muted">
 							{formatPrice(product.prices.regular_price, product.prices.currency_symbol, decimals)}
 						</del>
 					)}
@@ -91,16 +91,16 @@ export default function ProductCard({ product }: { product: WCProduct }) {
 							onClick={() => changeQty(-1)}
 							disabled={busy}
 							aria-label="Decrease quantity"
-							className="w-12 py-3 text-lg hover:bg-white/10 transition-colors disabled:opacity-60"
+							className="w-8 sm:w-12 py-2.5 sm:py-3 text-base sm:text-lg hover:bg-white/10 transition-colors disabled:opacity-60"
 						>
 							−
 						</button>
-						<span className="text-[11px] font-medium uppercase tracking-[0.14em]">{busy ? '…' : `${inCart.quantity} in cart`}</span>
+						<span className="text-[9.5px] sm:text-[11px] font-medium uppercase tracking-[0.14em]">{busy ? '…' : `${inCart.quantity} in cart`}</span>
 						<button
 							onClick={() => changeQty(1)}
 							disabled={busy}
 							aria-label="Increase quantity"
-							className="w-12 py-3 text-lg hover:bg-white/10 transition-colors disabled:opacity-60"
+							className="w-8 sm:w-12 py-2.5 sm:py-3 text-base sm:text-lg hover:bg-white/10 transition-colors disabled:opacity-60"
 						>
 							+
 						</button>
@@ -109,7 +109,7 @@ export default function ProductCard({ product }: { product: WCProduct }) {
 					<button
 						onClick={buy}
 						disabled={busy || !product.is_purchasable || !product.is_in_stock}
-						className="w-full py-3 px-4 bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] hover:bg-terracotta-deep transition-colors disabled:opacity-60"
+						className="w-full py-2.5 sm:py-3 px-2 sm:px-4 bg-ink text-ivory text-[9.5px] sm:text-[11px] font-medium uppercase tracking-[0.14em] sm:tracking-[0.18em] hover:bg-terracotta-deep transition-colors disabled:opacity-60"
 					>
 						{busy ? 'Adding…' : failed ? 'Failed — Retry' : product.is_in_stock ? 'Add to Cart' : 'Out of Stock'}
 					</button>

@@ -47,7 +47,7 @@ export default function ProductDetail({ product }: { product: WCProduct }) {
 	};
 
 	return (
-		<div className="max-w-[1280px] mx-auto px-6 py-10 md:py-14">
+		<div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-8 md:py-14">
 			{/* breadcrumbs */}
 			<nav className="text-[10.5px] uppercase tracking-[0.16em] text-muted mb-6">
 				<Link href="/" className="hover:text-terracotta">Home</Link>

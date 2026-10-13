@@ -10,9 +10,9 @@ export default function CartPage() {
 	const items = cart?.items ?? [];
 
 	return (
-		<div className="max-w-[1280px] mx-auto px-6 py-12 md:py-16">
+		<div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-10 md:py-16">
 			<p className="eyebrow mb-3">Your Selection</p>
-			<h1 className="h-display text-[36px] md:text-[44px] text-ink mb-10">Cart</h1>
+			<h1 className="h-display text-[32px] md:text-[44px] text-ink mb-8 md:mb-10">Cart</h1>
 
 			{loading && <p className="text-muted">Loading…</p>}
 
@@ -32,7 +32,7 @@ export default function CartPage() {
 						{items.map((it) => (
 							<div key={it.key} className="flex gap-5 py-5 border-b border-border">
 								{it.images[0] && (
-									<Image src={it.images[0].thumbnail || it.images[0].src} alt={it.name} width={96} height={96} className="rounded-xl object-cover bg-cream" />
+									<Image src={it.images[0].thumbnail || it.images[0].src} alt={it.name} width={80} height={80} className="rounded-xl object-cover bg-cream w-[64px] h-[64px] sm:w-[80px] sm:h-[80px]" />
 								)}
 								<div className="flex-1 min-w-0">
 									<Link href={`/product/${it.id}`} className="text-[15px] font-medium text-ink hover:text-terracotta">
@@ -41,13 +41,13 @@ export default function CartPage() {
 									<div className="flex items-center justify-between mt-4 flex-wrap gap-3">
 										<div className="inline-flex items-center border border-border overflow-hidden">
 											<button
-												className="w-9 h-9 flex items-center justify-center hover:bg-cream transition-colors"
+												className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-cream transition-colors"
 												onClick={() => (it.quantity > 1 ? update(it.key, it.quantity - 1) : remove(it.key))}
 											>
 												−
 											</button>
 											<span className="w-9 text-center font-medium text-[13px]">{it.quantity}</span>
-											<button className="w-9 h-9 flex items-center justify-center hover:bg-cream transition-colors" onClick={() => update(it.key, it.quantity + 1)}>
+											<button className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-cream transition-colors" onClick={() => update(it.key, it.quantity + 1)}>
 												+
 											</button>
 										</div>
@@ -61,7 +61,7 @@ export default function CartPage() {
 						))}
 					</div>
 
-					<aside className="bg-white border border-sand rounded-[14px] p-7 lg:sticky lg:top-24">
+					<aside className="bg-white border border-sand rounded-[14px] p-5 sm:p-7 lg:sticky lg:top-24">
 						<h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink mb-5">Summary</h2>
 						<div className="flex justify-between text-[14px] py-2 border-b border-sand">
 							<span className="text-muted">Subtotal</span>
