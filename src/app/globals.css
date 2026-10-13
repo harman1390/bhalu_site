@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terracotta: #a07655;
+  --color-terracotta-deep: #7d5c3f;
+  --color-tan: #1c1917;
+  --color-tan-deep: #000000;
+  --color-cream: #f3efe9;
+  --color-sand: #eae4dc;
+  --color-warm: #faf7f2;
+  --color-ivory: #faf7f2;
+  --color-border: #e7e0d6;
+  --color-ink: #191613;
+  --color-muted: #6f665d;
+  --color-star: #b08d57;
+  --color-blush: #f3ede6;
+  --font-sans: var(--font-jost), "Jost", "Segoe UI", system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--color-ivory);
+  color: var(--color-ink);
+}
+
+/* ---------- editorial type utilities ---------- */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--color-terracotta);
+}
+
+.h-display {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: #a07655;
+  color: #fff;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(160, 118, 85, 0.16);
+  border-color: #a07655;
+}
+
+/* ---------- scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 26px));
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- button press ---------- */
+button:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+/* ---------- image shimmer while loading ---------- */
+.img-shell {
+	background: linear-gradient(100deg, #f3efe9 40%, #ece7df 50%, #f3efe9 60%);
+	background-size: 200% 100%;
+	animation: shimmer 1.6s ease infinite;
+}
+img {
+  animation: fadeInImg 0.45s ease;
+}
+@keyframes fadeInImg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ---------- smooth scroll ---------- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- announcement marquee ---------- */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 36s linear infinite;
+}
+.animate-marquee-slow {
+  animation: marquee 64s linear infinite;
+}
+
+/* ---------- hero rotating word ---------- */
+@keyframes heroRoll {
+  0% { opacity: 0; transform: translateY(110%); filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.hero-roll {
+  display: inline-block;
+  animation: heroRoll 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- horizontal snap carousel ---------- */
+.snap-row {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  overflow-y: hidden;
+  touch-action: pan-x pan-y;
+}
+.snap-row::-webkit-scrollbar {
+  display: none;
+}
+.snap-row > * {
+  scroll-snap-align: start;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
