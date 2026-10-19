@@ -113,7 +113,7 @@ export default function DisclaimerPage() {
 					heading: '14. Contact Us',
 					paragraphs: ['If you have questions regarding a Barelyn product, please contact:'],
 					bullets: [
-						'Email: barelyn.co.in@gmail.com',
+						'Email: customercare@barelyn.co.in',
 						'Phone/WhatsApp: +91 83600-95146',
 						'Address: Basant Avenue, Ludhiana, Punjab, India, 141013',
 					],

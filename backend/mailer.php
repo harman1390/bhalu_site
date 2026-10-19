@@ -8,6 +8,10 @@
 require_once __DIR__ . '/helpers.php';
 
 function send_mail( string $to, string $subject, string $html ): bool {
+	// Strip CRLF + validate — $to is interpolated into mail() and SMTP commands.
+	$to = str_replace( array( "\r", "\n" ), '', trim( $to ) );
+	if ( ! filter_var( $to, FILTER_VALIDATE_EMAIL ) ) return false;
+
 	$cfg = cfg()['mail'];
 	$from = $cfg['from_name'] . ' <' . $cfg['from'] . '>';
 

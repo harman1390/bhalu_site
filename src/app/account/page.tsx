@@ -45,7 +45,7 @@ export default function AccountPage() {
 		if (reg.password.length < 6) return setErr('Password must be at least 6 characters.');
 		setBusy(true);
 		try {
-			const res = await fetch('/api/rzp/register', {
+			const res = await fetch('/api/auth/register', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify(reg),

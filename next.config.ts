@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
 	// hide the dev-tools 'N' badge bottom-left (dev only — never shipped to prod)
 	devIndicators: false,
 	images: {
-		// barelyn.local resolves to 127.0.0.1 — required in dev
-		dangerouslyAllowLocalIP: true,
+		// barelyn.local resolves to 127.0.0.1 — required in dev only
+		dangerouslyAllowLocalIP: process.env.NODE_ENV !== 'production',
 		remotePatterns: [
 			{ protocol: 'http', hostname: wpHost },
 			{ protocol: 'https', hostname: 'barelyn.co.in' },
@@ -22,6 +22,15 @@ const nextConfig: NextConfig = {
 	},
 	async headers() {
 		return [
+			{
+				// Baseline hardening on every response
+				source: '/:path*',
+				headers: [
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{ key: 'X-Frame-Options', value: 'DENY' },
+					{ key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+				],
+			},
 			{
 				source: '/api/wc/:path*',
 				headers: [{ key: 'Access-Control-Allow-Credentials', value: 'true' }],

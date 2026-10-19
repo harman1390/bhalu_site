@@ -10,6 +10,7 @@ function cfg(): array {
 function json_out( $data, int $status = 200 ): void {
 	http_response_code( $status );
 	header( 'Content-Type: application/json; charset=utf-8' );
+	header( 'X-Content-Type-Options: nosniff' );
 	header( 'nonce: php-store' ); // satisfies storefront nonce capture; unused by backend
 	header( 'nonce-timestamp: ' . time() );
 	echo json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
@@ -22,7 +23,9 @@ function fail( string $code, string $message, int $status = 400 ): void {
 }
 
 function body(): array {
-	$d = json_decode( file_get_contents( 'php://input' ), true );
+	// php://input ignores post_max_size — cap reads to 64 KB.
+	$raw = file_get_contents( 'php://input', false, null, 0, 65536 );
+	$d   = json_decode( (string) $raw, true );
 	return is_array( $d ) ? $d : array();
 }
 
@@ -39,12 +42,17 @@ function apply_fields( $data, string $fields ) {
 /* ---------- cart session ---------- */
 
 function cart_token(): string {
-	if ( ! empty( $_COOKIE['bl_cart'] ) ) return $_COOKIE['bl_cart'];
+	// Only accept tokens we issued (40-hex) — reject arbitrary cookie values.
+	if ( ! empty( $_COOKIE['bl_cart'] )
+		&& preg_match( '/^[a-f0-9]{40}$/', (string) $_COOKIE['bl_cart'] ) ) {
+		return $_COOKIE['bl_cart'];
+	}
 	$t = bin2hex( random_bytes( 20 ) );
 	setcookie( 'bl_cart', $t, array(
 		'expires'  => time() + 60 * 60 * 24 * 30,
 		'path'     => '/',
-		'httponly' => false, // cross-origin via Next proxy; readable not required, kept simple
+		'secure'   => ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off',
+		'httponly' => true, // never read by JS — all calls go through the Next proxy
 		'samesite' => 'Lax',
 	) );
 	$_COOKIE['bl_cart'] = $t;
@@ -241,4 +249,28 @@ function jwt_encode( array $payload, string $secret ): string {
 	$pay  = $b64( json_encode( $payload ) );
 	$sig  = $b64( hash_hmac( 'sha256', "$head.$pay", $secret, true ) );
 	return "$head.$pay.$sig";
+}
+
+/* ---------- tiny rate limiter ---------- */
+
+/**
+ * Per-IP sliding-window limiter (file store in sys temp — outside docroot).
+ * rate_limit('login', 10, 300) = max 10 calls per IP per 5 minutes.
+ */
+function rate_limit( string $bucket, int $max, int $window ): void {
+	$dir = sys_get_temp_dir() . '/barelyn_rl';
+	if ( ! is_dir( $dir ) ) @mkdir( $dir, 0770, true );
+	$f   = $dir . '/' . $bucket . '_' . md5( $_SERVER['REMOTE_ADDR'] ?? 'cli' );
+	$now = time();
+	$hits = array();
+	if ( is_file( $f ) ) {
+		foreach ( explode( ',', (string) file_get_contents( $f ) ) as $t ) {
+			if ( (int) $t > $now - $window ) $hits[] = (int) $t;
+		}
+	}
+	if ( count( $hits ) >= $max ) {
+		fail( 'rate_limited', 'Too many attempts — please try again later.', 429 );
+	}
+	$hits[] = $now;
+	@file_put_contents( $f, implode( ',', $hits ), LOCK_EX );
 }

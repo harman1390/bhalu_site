@@ -11,9 +11,10 @@
  * POST cart/remove-item             { key } or ?key=
  * POST checkout                     { billing_address, shipping_address, payment_method }
  * POST auth/token                   { username, password } -> { token, user_* }
- * POST rzp/register                 { name, email, phone, password }
- * POST rzp/razorpay-order           { order_id }
- * POST rzp/razorpay-verify          { order_id, razorpay_order_id, razorpay_payment_id, razorpay_signature }
+ * POST auth/register                { name, email, phone, password }
+ * POST fastrr/init                  { order_id } -> { checkout_id, iframe_url }
+ * POST fastrr/confirm               { order_id } -> marks order paid
+ * POST fastrr/status                { order_id } -> { status }
  */
 
 require __DIR__ . '/db.php';
@@ -23,9 +24,8 @@ $path   = trim( (string) ( $_GET['p'] ?? '' ), '/' );
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ( $method === 'OPTIONS' ) {
-	header( 'Access-Control-Allow-Origin: *' );
-	header( 'Access-Control-Allow-Headers: content-type, nonce' );
-	header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );
+	// All traffic arrives same-origin via the Next.js /api proxies — no CORS needed.
+	http_response_code( 204 );
 	exit;
 }
 
@@ -51,8 +51,8 @@ switch ( true ) {
 	case str_starts_with( $path, 'auth/' ):
 		require __DIR__ . '/routes/auth.php';
 		break;
-	case str_starts_with( $path, 'rzp/' ):
-		require __DIR__ . '/routes/rzp.php';
+	case str_starts_with( $path, 'fastrr/' ):
+		require __DIR__ . '/routes/fastrr.php';
 		break;
 	default:
 		fail( 'rest_no_route', 'No route was found matching the URL and request method', 404 );

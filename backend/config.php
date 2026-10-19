@@ -1,14 +1,15 @@
 <?php
 /**
  * Barelyn store backend config.
- * Single source for DB creds, currency, JWT secret, Razorpay keys.
+ * Single source for DB creds, currency, JWT secret, Fastrr token.
+ * Secrets come from BARELYN_* env vars; the literal values below are local dev only.
  */
 return array(
 	'db' => array(
-		'host'    => '127.0.0.1',
-		'name'    => 'barelyn_shop',
-		'user'    => 'root',
-		'pass'    => '',
+		'host'    => getenv( 'BARELYN_DB_HOST' ) ?: '127.0.0.1',
+		'name'    => getenv( 'BARELYN_DB_NAME' ) ?: 'barelyn_shop',
+		'user'    => getenv( 'BARELYN_DB_USER' ) ?: 'root',
+		'pass'    => getenv( 'BARELYN_DB_PASS' ) ?: '',
 		'charset' => 'utf8mb4',
 	),
 
@@ -20,13 +21,16 @@ return array(
 	'currency'        => 'INR',
 	'currency_symbol' => '₹',
 
-	// Secret for signing customer tokens — change in production.
-	'jwt_secret' => 'CHANGE_ME_barelyn_local_dev_secret',
+	// Secret for signing customer tokens — set BARELYN_JWT_SECRET in production.
+	'jwt_secret' => getenv( 'BARELYN_JWT_SECRET' ) ?: 'barelyn_local_dev_secret_do_not_ship',
 
-	// Razorpay (ported from woocommerce_razorpay_settings — test keys).
-	'rzp' => array(
-		'key_id'     => 'rzp_test_TSIwRkH00Rxq8W',
-		'key_secret' => 'jH0jv4h07sK73kMNdy58ieqT',
+	// Fastrr (Shiprocket/Pickrr) hosted checkout — storefront integration id
+	// recovered from the old Woo plugin (fastrr_checkout_option_name.integration_id).
+	'fastrr' => array(
+		'token'       => getenv( 'BARELYN_FASTRR_TOKEN' ) ?: '3208e6de-c655-4815-8d74-366296c334ec',
+		'init_url'    => 'https://pickout.pickrr.com/users/checkout/init/',
+		'iframe_base' => 'https://checkout-pickrr.netlify.app/?checkoutId=',
+		'domain'      => 'barelyn.co.in',
 	),
 
 	// Transactional email. If smtp.host is empty, mail() is tried, then
@@ -36,18 +40,19 @@ return array(
 		'from_name' => 'BARELYN',
 		'admin'     => 'admin@barelyn.co.in', // new-order notifications
 		'smtp'      => array(
-			'host'   => '',   // e.g. smtp.gmail.com / smtp.hostinger.com
-			'port'   => 587,
-			'user'   => '',
-			'pass'   => '',
+			'host'   => getenv( 'BARELYN_SMTP_HOST' ) ?: '',   // e.g. smtp.gmail.com / smtp.hostinger.com
+			'port'   => (int) ( getenv( 'BARELYN_SMTP_PORT' ) ?: 587 ),
+			'user'   => getenv( 'BARELYN_SMTP_USER' ) ?: '',
+			'pass'   => getenv( 'BARELYN_SMTP_PASS' ) ?: '',
 			'secure' => 'tls', // 'tls' | 'ssl' | ''
 		),
-		'log' => __DIR__ . '/mail.log',
+		// Outside the backend docroot so the log (customer PII) is never web-served.
+		'log' => dirname( __DIR__ ) . '/mail.log',
 	),
 
-	// Minimal admin panel at /barelyn-api/admin/ — change these!
+	// Minimal admin panel at /barelyn-api/admin/ — set BARELYN_ADMIN_* in production!
 	'admin' => array(
-		'username' => 'admin',
-		'password' => 'barelyn@123',
+		'username' => getenv( 'BARELYN_ADMIN_USER' ) ?: 'admin',
+		'password' => getenv( 'BARELYN_ADMIN_PASS' ) ?: 'barelyn@123',
 	),
 );

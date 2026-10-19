@@ -134,7 +134,7 @@ export default function PrivacyPolicyPage() {
 						'Subject to applicable law, you may contact Barelyn regarding requests relating to your personal information, including requests for access, correction, updating, deletion or other applicable data-related rights.',
 						'To make a request, contact us at:',
 					],
-					bullets: ['Email: barelyn.co.in@gmail.com', 'Phone: +91 83600-95146'],
+					bullets: ['Email: customercare@barelyn.co.in', 'Phone: +91 83600-95146'],
 				},
 				{
 					heading: '11. Third-Party Websites',
@@ -154,7 +154,7 @@ export default function PrivacyPolicyPage() {
 						'Barelyn',
 						'Legal Entity: Barelyn LLP',
 						'Address: Basant Avenue, Ludhiana, Punjab, India, 141013',
-						'Email: barelyn.co.in@gmail.com',
+						'Email: customercare@barelyn.co.in',
 						'Phone: +91 83600-95146',
 						'Grievance/Privacy Contact: Baldeep Singh/Authorised Partner',
 						'Email: bsarora11@gmail.com',

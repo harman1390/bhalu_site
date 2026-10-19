@@ -1,5 +1,5 @@
 <?php
-/** GET /products — filters: search, category, slug, on_sale, orderby, order, per_page, page, _fields */
+/** GET /products — filters: search, category, slug, on_sale, min_price, max_price, stock_status, orderby, order, per_page, page, _fields */
 
 $q = 'SELECT p.*, GROUP_CONCAT(pc.category_id) AS cat_ids
 	  FROM products p
@@ -22,6 +22,18 @@ if ( isset( $_GET['category'] ) && $_GET['category'] !== '' ) {
 }
 if ( isset( $_GET['on_sale'] ) && in_array( $_GET['on_sale'], array( 'true', '1' ), true ) ) {
 	$where[] = 'p.sale_price IS NOT NULL AND p.sale_price < p.regular_price';
+}
+// WC convention: min_price/max_price are in minor units (paise).
+if ( isset( $_GET['min_price'] ) && ctype_digit( (string) $_GET['min_price'] ) ) {
+	$where[] = 'p.price >= ?';
+	$args[]  = (int) $_GET['min_price'];
+}
+if ( isset( $_GET['max_price'] ) && ctype_digit( (string) $_GET['max_price'] ) ) {
+	$where[] = 'p.price <= ?';
+	$args[]  = (int) $_GET['max_price'];
+}
+if ( isset( $_GET['stock_status'] ) && $_GET['stock_status'] === 'instock' ) {
+	$where[] = 'p.is_in_stock = 1';
 }
 
 $sql = $q . ( $where ? ' WHERE ' . implode( ' AND ', $where ) : '' ) . ' GROUP BY p.id';

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/components/CartProvider';
 import { formatPrice } from '@/lib/types';
+import FastrrCheckout from '@/components/FastrrCheckout';
 
 export default function CartPage() {
 	const { cart, update, remove, loading } = useCart();
@@ -71,9 +72,11 @@ export default function CartPage() {
 							<span>Total</span>
 							<span>{formatPrice(cart.totals.total_price, cart.totals.currency_symbol)}</span>
 						</div>
-						<Link href="/checkout" className="block text-center bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] py-4 mt-3 hover:bg-terracotta-deep transition-colors">
-							Proceed to Checkout
-						</Link>
+						<FastrrCheckout
+							label="Buy Now"
+							subtext="UPI · Cards · COD · Wallets"
+							className="block w-full text-center bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] py-4 mt-3 hover:bg-terracotta-deep transition-colors disabled:opacity-60"
+						/>
 					</aside>
 				</div>
 			)}

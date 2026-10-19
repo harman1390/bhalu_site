@@ -2,9 +2,13 @@
 /**
  * One-shot importer: WordPress/WooCommerce -> barelyn_shop.
  * Run:  C:\xampp\php\php.exe backend\migrate.php
- * Or browse: http://localhost/barelyn-api/migrate.php
  * Safe to re-run — tables are truncated first.
  */
+
+if ( PHP_SAPI !== 'cli' ) {
+	http_response_code( 403 );
+	exit( 'CLI only.' );
+}
 
 require __DIR__ . '/db.php';
 require __DIR__ . '/helpers.php';
@@ -102,6 +106,7 @@ CREATE TABLE IF NOT EXISTS orders (
 	payment_method VARCHAR(40) NULL,
 	razorpay_order_id VARCHAR(60) NULL,
 	razorpay_payment_id VARCHAR(60) NULL,
+	fastrr_checkout_id VARCHAR(60) NULL,
 	cart_token VARCHAR(64) NULL,
 	paid_at DATETIME NULL,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP

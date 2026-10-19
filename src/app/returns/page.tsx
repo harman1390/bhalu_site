@@ -46,7 +46,7 @@ export default function ReturnsPage() {
 				},
 				{
 					heading: '4. How to Request a Return or Replacement',
-					paragraphs: ['To request a return, replacement or refund, contact barelyn.co.in@gmail.com and please provide:'],
+					paragraphs: ['To request a return, replacement or refund, contact customercare@barelyn.co.in and please provide:'],
 					bullets: [
 						'Order number',
 						'Customer name',
@@ -142,7 +142,7 @@ export default function ReturnsPage() {
 					heading: '16. Contact Us',
 					paragraphs: ['For return, refund or cancellation requests:'],
 					bullets: [
-						'Email: barelyn.co.in@gmail.com',
+						'Email: customercare@barelyn.co.in',
 						'Phone/WhatsApp: +91 83600-95146',
 						'Address: Basant Avenue, Ludhiana, Punjab, India, 141013',
 					],

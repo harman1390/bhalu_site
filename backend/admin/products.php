@@ -33,6 +33,11 @@ function save_image( string $field, string $dir, string $urlBase ): ?string {
 	if ( empty( $_FILES[ $field ] ) || $_FILES[ $field ]['error'] !== UPLOAD_ERR_OK ) return null;
 	$ext = strtolower( pathinfo( $_FILES[ $field ]['name'], PATHINFO_EXTENSION ) );
 	if ( ! in_array( $ext, array( 'jpg', 'jpeg', 'png', 'webp', 'gif' ), true ) ) return null;
+	// Verify the content is actually an image, not just a renamed payload.
+	$info = @getimagesize( $_FILES[ $field ]['tmp_name'] );
+	if ( $info === false || ! in_array( $info[2], array( IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP, IMAGETYPE_GIF ), true ) ) {
+		return null;
+	}
 	if ( ! is_dir( $dir ) ) mkdir( $dir, 0775, true );
 	$name = uniqid( 'p', true ) . '.' . $ext;
 	move_uploaded_file( $_FILES[ $field ]['tmp_name'], "$dir/$name" );
@@ -42,6 +47,7 @@ function save_image( string $field, string $dir, string $urlBase ): ?string {
 /* ---------- actions ---------- */
 
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+	csrf_check();
 	$act = $_POST['act'] ?? '';
 
 	if ( $act === 'save' ) {
@@ -71,7 +77,10 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 			if ( isset( $_POST['extra_image'] ) ) {
 				foreach ( (array) $_POST['extra_image'] as $u ) {
 					$u = trim( (string) $u );
-					if ( $u ) $images[] = image_json( $u, $name, $name );
+					// http(s) or same-site paths only — never javascript:/data:.
+					if ( $u && ( preg_match( '#^https?://#i', $u ) || str_starts_with( $u, '/' ) ) ) {
+						$images[] = image_json( $u, $name, $name );
+					}
 				}
 			}
 
@@ -153,6 +162,7 @@ if ( $edit !== null ) {
 	<h1><?= $id ? 'Edit' : 'Add' ?> product</h1>
 	<div class="card">
 	<form method="post" enctype="multipart/form-data">
+		<?php csrf_field(); ?>
 		<input type="hidden" name="act" value="save">
 		<input type="hidden" name="id" value="<?= $id ?>">
 		<div class="row">
@@ -229,7 +239,8 @@ function wp_img_path( string $src ): string {
 		<td class="mut"><?= h( $p['cats'] ) ?></td>
 		<td>
 			<a class="btn sm ghost" href="?edit=<?= (int) $p['id'] ?>">Edit</a>
-			<form method="post" style="display:inline" onsubmit="return confirm('Delete <?= h( $p['name'] ) ?>?')">
+			<form method="post" style="display:inline" onsubmit="return confirm('Delete this product?')">
+				<?php csrf_field(); ?>
 				<input type="hidden" name="act" value="delete"><input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
 				<button class="btn sm danger">Delete</button>
 			</form>

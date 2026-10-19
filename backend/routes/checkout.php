@@ -3,6 +3,8 @@
 
 require_once __DIR__ . '/../mailer.php';
 
+rate_limit( 'checkout', 20, 600 ); // 20 orders / 10 min per IP
+
 $in  = body();
 $cid = cart_id( $pdo );
 
@@ -14,11 +16,16 @@ $items->execute( array( $cid ) );
 $rows = $items->fetchAll();
 if ( ! $rows ) fail( 'woocommerce_rest_cart_empty', 'Cannot place an order with an empty cart.', 400 );
 
-$bill = $in['billing_address'] ?? array();
-$ship = $in['shipping_address'] ?? array();
-if ( empty( $bill['email'] ) || empty( $bill['first_name'] ) ) {
-	fail( 'woocommerce_rest_checkout_missing_field', 'Billing name and email are required.', 400 );
+// Bound scalar fields — these get stored and echoed into emails.
+$clip = fn( $a ) => is_array( $a ) ? array_map( fn( $v ) => is_string( $v ) ? mb_substr( $v, 0, 500 ) : $v, $a ) : array();
+$bill = $clip( $in['billing_address'] ?? array() );
+$ship = $clip( $in['shipping_address'] ?? array() );
+$email = trim( (string) ( $bill['email'] ?? '' ) );
+if ( $email === '' || ! filter_var( $email, FILTER_VALIDATE_EMAIL )
+	|| preg_match( '/[\r\n]/', $email ) || empty( $bill['first_name'] ) ) {
+	fail( 'woocommerce_rest_checkout_missing_field', 'A valid billing name and email are required.', 400 );
 }
+$bill['email'] = $email;
 
 $total = 0;
 foreach ( $rows as $r ) $total += (int) $r['price'] * (int) $r['quantity'];
@@ -34,7 +41,7 @@ try {
 		cfg()['currency'],
 		json_encode( $bill, JSON_UNESCAPED_UNICODE ),
 		json_encode( $ship, JSON_UNESCAPED_UNICODE ),
-		(string) ( $in['payment_method'] ?? 'razorpay' ),
+		(string) ( $in['payment_method'] ?? 'fastrr' ),
 		cart_token(),
 	) );
 	$oid = (int) $pdo->lastInsertId();

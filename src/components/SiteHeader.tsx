@@ -16,8 +16,7 @@ const CATS = [
 ];
 
 const ANNOUNCEMENTS = [
-	'Free shipping on orders above ₹499',
-	'Dermatologically tested formulas',
+	'Free shipping on orders above ₹999',
 	'Made for Indian skin',
 	'Clean. Conscious. Effective.',
 ];

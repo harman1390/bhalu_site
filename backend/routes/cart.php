@@ -12,7 +12,7 @@ switch ( true ) {
 
 	case $method === 'POST' && $action === 'add-item':
 		$pid = (int) ( $in['id'] ?? 0 );
-		$qty = max( 1, (int) ( $in['quantity'] ?? 1 ) );
+		$qty = min( 99, max( 1, (int) ( $in['quantity'] ?? 1 ) ) );
 		$st  = $pdo->prepare( 'SELECT id, is_in_stock FROM products WHERE id = ?' );
 		$st->execute( array( $pid ) );
 		$p = $st->fetch();
@@ -28,7 +28,7 @@ switch ( true ) {
 
 	case $method === 'POST' && $action === 'update-item':
 		$key = (string) ( $in['key'] ?? '' );
-		$qty = (int) ( $in['quantity'] ?? 1 );
+		$qty = min( 99, (int) ( $in['quantity'] ?? 1 ) );
 		if ( $key === '' ) fail( 'woocommerce_rest_cart_item_key_missing', 'Cart item key is required.', 400 );
 		if ( $qty <= 0 ) {
 			$pdo->prepare( 'DELETE FROM cart_items WHERE cart_id = ? AND item_key = ?' )->execute( array( $cid, $key ) );

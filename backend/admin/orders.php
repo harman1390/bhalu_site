@@ -24,7 +24,7 @@ page_head( 'Orders', 'orders' );
 			<span class="mut"><?= h( $bill['email'] ?? '' ) ?><br><?= h( $bill['phone'] ?? '' ) ?></span></td>
 		<td class="mut" style="max-width:240px"><?= implode( '<br>', $li ) ?></td>
 		<td><b><?= money( $o['total'] ) ?></b></td>
-		<td class="mut"><?= h( $o['razorpay_payment_id'] ?: $o['payment_method'] ?: '—' ) ?></td>
+		<td class="mut"><?= h( $o['fastrr_checkout_id'] ?: ( $o['razorpay_payment_id'] ?? null ) ?: $o['payment_method'] ?: '—' ) ?></td>
 		<td><span class="pill <?= h( $o['status'] ) ?>"><?= h( $o['status'] ) ?></span></td>
 		<td class="mut"><?= h( $o['created_at'] ) ?></td>
 	</tr>

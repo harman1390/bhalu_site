@@ -14,7 +14,7 @@ const SKIN_TYPES = [
 const MARQUEE_WORDS = ['Clean Formulas', 'Clinical Results', 'Indian Skin', 'Conscious Beauty', 'BARELYN'];
 
 const BADGES = [
-	{ label: 'Clinically Proven Results', img: 'Container-8' },
+	{ label: 'ISO Certified', img: 'Container-8' },
 	{ label: 'Cruelty Free', img: 'Container-9' },
 	{ label: 'Made for Indian Skin', img: 'Container-10' },
 ];
@@ -93,7 +93,7 @@ export default async function HomePage() {
 			</section>
 
 			{/* ── BESTSELLERS ── */}
-			<section className="max-w-[1360px] mx-auto px-5 md:px-6 py-14 md:py-20">
+			<section className="max-w-[1360px] mx-auto px-5 md:px-6 pt-14 md:pt-20 pb-3 md:pb-5">
 				<Reveal>
 					<div className="flex items-end justify-between mb-7 md:mb-9">
 						<div>
@@ -111,57 +111,14 @@ export default async function HomePage() {
 				<ProductRow products={bestList} />
 			</section>
 
-			{/* ── PHILOSOPHY (Odyssée-style split) ── */}
-			<section className="border-y border-sand">
-				<div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] items-stretch">
-					<div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[520px] overflow-hidden">
-						<Image
-							src="/wp-uploads/2026/03/2560-by-1244-1-mobile.jpg"
-							unoptimized
-							alt="Barelyn skincare ritual"
-							fill
-							sizes="(max-width:1024px) 100vw, 50vw"
-							className="object-cover object-center lg:hidden"
-						/>
-						<Image
-							src="/wp-uploads/2026/03/2560-by-1244-1.png"
-							unoptimized
-							alt="Barelyn skincare ritual"
-							fill
-							sizes="(max-width:1024px) 100vw, 50vw"
-							className="object-cover object-center hidden lg:block"
-						/>
-					</div>
-					<div className="flex flex-col justify-center px-5 md:px-10 lg:pl-12 lg:pr-10 py-12 md:py-16 bg-warm">
-						<Reveal>
-							<p className="eyebrow mb-5">The Barelyn Standard</p>
-							<h2 className="h-display text-[30px] md:text-[44px] text-ink">
-								Where your skin meets <em>its potential.</em>
-							</h2>
-							<p className="mt-6 text-[14.5px] md:text-[15.5px] leading-[1.85] text-muted max-w-[480px]">
-								Every Barelyn formula begins with evidence — clinically considered actives, balanced for Indian
-								skin and Indian weather. No excess, no noise. Just skincare that restores integrity and balance,
-								gently guiding your skin back to its best.
-							</p>
-							<Link
-								href="/shop"
-								className="mt-8 inline-block text-[11px] font-medium uppercase tracking-[0.18em] text-ink underline underline-offset-[7px] decoration-terracotta hover:text-terracotta transition-colors w-fit"
-							>
-								Discover the range
-							</Link>
-						</Reveal>
-					</div>
-				</div>
-			</section>
-
-			{/* ── STATEMENT MARQUEE ── */}
-			<section className="overflow-hidden py-8 md:py-10 select-none" aria-hidden="true">
+			{/* ── STATEMENT MARQUEE — hugs the product row above ── */}
+			<section className="overflow-hidden pt-2 pb-8 md:pt-3 md:pb-10 select-none" aria-hidden="true">
 				<div className="flex w-max animate-marquee-slow">
 					{[0, 1].map((half) => (
 						<div key={half} className="flex shrink-0 items-center">
 							{MARQUEE_WORDS.map((w) => (
 								<span key={w} className="flex items-center">
-									<span className="h-display text-[30px] md:text-[48px] text-ink/85 whitespace-nowrap px-6 md:px-8">
+									<span className="h-display text-[30px] md:text-[48px] text-ink/85 whitespace-nowrap px-5 md:px-7">
 										{w}
 									</span>
 									<span className="text-terracotta text-[12px] md:text-[16px]">✦</span>

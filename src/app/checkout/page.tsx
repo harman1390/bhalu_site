@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/components/CartProvider';
 import { formatPrice } from '@/lib/types';
 import { checkout } from '@/lib/client';
-
-declare global {
-	interface Window {
-		Razorpay?: new (opts: Record<string, unknown>) => { open(): void };
-	}
-}
+import {
+	openFastrrCheckout,
+	closeFastrrModal,
+	watchFastrr,
+	type FastrrCartItem,
+} from '@/lib/fastrr';
 
 interface Address {
 	first_name: string;
@@ -64,6 +64,16 @@ export default function CheckoutPage() {
 	const [busy, setBusy] = useState(false);
 	const [err, setErr] = useState('');
 	const [done, setDone] = useState<number | null>(null);
+	const [confirmPrompt, setConfirmPrompt] = useState<number | null>(null);
+	const orderIdRef = useRef<number | null>(null);
+	const paidRef = useRef(false);
+	const unwatchRef = useRef<(() => void) | null>(null);
+
+	// Modal dismissed without completing — via ✕, iframe close, or device Back.
+	const dismiss = () => {
+		closeFastrrModal();
+		if (!paidRef.current && orderIdRef.current) setConfirmPrompt(orderIdRef.current);
+	};
 	const [pinBusy, setPinBusy] = useState(false);
 	const [manualLoc, setManualLoc] = useState(false); // city/state editable ONLY when lookup fails
 	const [stateName, setStateName] = useState(''); // display name; form.state holds WC code
@@ -108,15 +118,32 @@ export default function CheckoutPage() {
 		}
 	};
 
-	const loadRzp = () =>
-		new Promise<void>((resolve, reject) => {
-			if (window.Razorpay) return resolve();
-			const s = document.createElement('script');
-			s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-			s.onload = () => resolve();
-			s.onerror = () => reject(new Error('Failed to load Razorpay'));
-			document.body.appendChild(s);
+	// Fastrr hosted checkout: mark order paid once the hosted UI reports
+	// completion, or the customer confirms after closing it.
+	const confirmPaid = async (orderId?: number) => {
+		const oid = orderId ?? orderIdRef.current ?? undefined;
+		const res = await fetch('/api/fastrr/confirm', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			credentials: 'include',
+			body: JSON.stringify(oid ? { order_id: oid } : {}),
 		});
+		if (!res.ok) throw new Error('Payment confirmation failed');
+		const d = await res.json().catch(() => ({}));
+		paidRef.current = true;
+		closeFastrrModal();
+		setConfirmPrompt(null);
+		setDone(d?.order_id ?? oid ?? 1);
+	};
+
+	// Return from Fastrr (redirect to /checkout?fastrr_status=...).
+	useEffect(() => {
+		if (new URLSearchParams(window.location.search).get('fastrr_status')) {
+			confirmPaid().catch(() => setErr('Payment confirmation failed'));
+		}
+		return () => unwatchRef.current?.();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const placeOrder = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -132,54 +159,47 @@ export default function CheckoutPage() {
 		}
 		setBusy(true);
 		try {
-			// 1. create WC order via Store API (nonce-aware client)
+			// 1. create pending order
 			const order = await checkout.place({
 				billing_address: form,
 				shipping_address: form,
-				payment_method: 'razorpay',
+				payment_method: 'fastrr',
 			});
+			const orderId = order.id ?? order.order_id;
+			if (!orderId) throw new Error('Order creation failed');
 
-			// 2. create Razorpay order on WP side
-			const rzp = await fetch('/api/rzp/razorpay-order', {
+			// 2. create Fastrr checkout session, then open the hosted iframe
+			const init = await fetch('/api/fastrr/init', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ order_id: order.id ?? order.order_id }),
+				credentials: 'include',
+				body: JSON.stringify({ order_id: orderId, direct: true }),
 			}).then(async (r) => {
 				const d = await r.json();
 				if (!r.ok) throw new Error(d?.message ?? 'Payment init failed');
-				return d;
+				return d as { order_id: number };
 			});
+			orderIdRef.current = init.order_id ?? orderId;
 
-			// 3. open Razorpay modal
-			await loadRzp();
-			await new Promise<void>((resolve, reject) => {
-				const modal = new window.Razorpay!({
-					key: rzp.key_id,
-					amount: rzp.amount,
-					currency: rzp.currency,
-					name: 'BARELYN',
-					description: `Order #${order.order_number ?? order.id}`,
-					order_id: rzp.razorpay_order_id,
-					handler: async (res: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
-						try {
-							const v = await fetch('/api/rzp/razorpay-verify', {
-								method: 'POST',
-								headers: { 'content-type': 'application/json' },
-								body: JSON.stringify({ ...res, order_id: order.id }),
-							});
-							if (!v.ok) throw new Error('Payment verification failed');
-							resolve();
-						} catch (e2) {
-							reject(e2);
-						}
-					},
-					modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
-					theme: { color: '#1c1917' },
-				});
-				modal.open();
+			// 3. open the hosted Fastrr checkout — channel script owns the modal
+			const fastrrItems: FastrrCartItem[] = items.map((it) => ({
+				product_id: it.id,
+				variation_id: 0,
+				title: it.name,
+				price: Number(it.prices.price), // paise — script converts to ₹
+				quantity: it.quantity,
+				image: it.images?.[0]?.src ?? '',
+				custom_attributes: {},
+			}));
+			await openFastrrCheckout(fastrrItems);
+
+			unwatchRef.current?.();
+			unwatchRef.current = watchFastrr({
+				onDone: () => {
+					confirmPaid().catch(() => setErr('Payment confirmation failed'));
+				},
+				onClosed: dismiss,
 			});
-
-			setDone(order.id ?? order.order_id ?? null);
 		} catch (e2) {
 			setErr(e2 instanceof Error ? e2.message : 'Something went wrong');
 		} finally {
@@ -288,11 +308,34 @@ export default function CheckoutPage() {
 							disabled={busy}
 							className="w-full bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] py-4 mt-5 hover:bg-terracotta-deep transition-colors disabled:opacity-60"
 						>
-							{busy ? 'Processing…' : 'Pay with Razorpay'}
+							{busy ? 'Processing…' : 'Checkout with Fastrr'}
 						</button>
-						<p className="text-[11px] text-muted mt-3 text-center">UPI · Cards · Netbanking · Wallets</p>
+						<p className="text-[11px] text-muted mt-3 text-center">UPI · Cards · COD · Wallets</p>
 					</aside>
 				</form>
+			)}
+
+			{/* Fallback when the checkout modal is closed without a completion event */}
+			{confirmPrompt !== null && (
+				<div className="fixed bottom-6 inset-x-0 z-[9998] flex justify-center px-4">
+					<div className="bg-ink text-ivory px-5 py-3.5 rounded-[12px] shadow-2xl flex items-center justify-center gap-4 max-w-full">
+						<p className="text-[13px] whitespace-nowrap">Payment completed?</p>
+						<button
+							type="button"
+							onClick={() => confirmPaid(confirmPrompt).catch(() => setErr('Payment confirmation failed'))}
+							className="shrink-0 whitespace-nowrap bg-white text-ink text-[11px] font-medium uppercase tracking-[0.12em] px-4 py-2 rounded-[8px]"
+						>
+							Yes, mark paid
+						</button>
+						<button
+							type="button"
+							onClick={() => setConfirmPrompt(null)}
+							className="shrink-0 whitespace-nowrap text-[11px] uppercase tracking-[0.12em] text-ivory/70 underline underline-offset-2"
+						>
+							Not yet
+						</button>
+					</div>
+				</div>
 			)}
 		</div>
 	);

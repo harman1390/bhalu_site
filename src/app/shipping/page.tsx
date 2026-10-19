@@ -69,7 +69,7 @@ export default function ShippingPage() {
 				{
 					heading: '6. Delayed Delivery',
 					paragraphs: [
-						'If your order is delayed beyond the estimated delivery period, please contact us at barelyn.co.in@gmail.com or +91 83600-95146.',
+						'If your order is delayed beyond the estimated delivery period, please contact us at customercare@barelyn.co.in or +91 83600-95146.',
 						'We will coordinate with the relevant delivery partner and try to resolve the issue.',
 					],
 				},
@@ -121,7 +121,7 @@ export default function ShippingPage() {
 					heading: '12. Contact Us',
 					paragraphs: ['For shipping or delivery-related questions:'],
 					bullets: [
-						'Email: barelyn.co.in@gmail.com',
+						'Email: customercare@barelyn.co.in',
 						'Phone/WhatsApp: +91 83600-95146',
 						'Address: Basant Avenue, Ludhiana, Punjab, India, 141013',
 					],

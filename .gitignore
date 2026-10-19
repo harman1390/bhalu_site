@@ -42,3 +42,6 @@ next-env.d.ts
 
 # wc upload logs
 public/wp-uploads/wc-logs/
+
+# mail fallback log (contains customer PII)
+mail.log

@@ -4,7 +4,45 @@
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../helpers.php';
 
+session_set_cookie_params( array(
+	'lifetime' => 0,
+	'path'     => '/',
+	'secure'   => ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off',
+	'httponly' => true,
+	'samesite' => 'Lax',
+) );
 session_start();
+
+header( 'X-Frame-Options: DENY' );
+header( 'X-Content-Type-Options: nosniff' );
+header( 'Referrer-Policy: same-origin' );
+
+/* ---------- CSRF ---------- */
+
+function csrf_token(): string {
+	if ( empty( $_SESSION['csrf'] ) ) $_SESSION['csrf'] = bin2hex( random_bytes( 20 ) );
+	return $_SESSION['csrf'];
+}
+
+function csrf_field(): void {
+	echo '<input type="hidden" name="csrf" value="' . csrf_token() . '">';
+}
+
+function csrf_check(): void {
+	if ( ! hash_equals( $_SESSION['csrf'] ?? '', (string) ( $_POST['csrf'] ?? '' ) ) ) {
+		http_response_code( 403 );
+		exit( 'Invalid CSRF token.' );
+	}
+}
+
+// Logout is a POST + CSRF-protected action.
+if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['logout'] ) ) {
+	csrf_check();
+	$_SESSION = array();
+	session_destroy();
+	header( 'Location: index.php' );
+	exit;
+}
 
 function admin_cfg(): array {
 	return cfg()['admin'];
@@ -182,20 +220,17 @@ function page_head( string $title, string $active = '' ): void {
 			Orders</a>
 	</nav>
 	<div class="bottom">
-		<a href="?logout=1">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-			Log out</a>
+		<form method="post" action="index.php" style="margin:0">
+			<?php csrf_field(); ?>
+			<button type="submit" name="logout" value="1" style="all:unset;cursor:pointer;color:var(--muted);display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;width:100%;box-sizing:border-box">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+				Log out</button>
+		</form>
 	</div>
 </aside>
 <?php endif; ?>
 <main>
-	<?php
-	if ( isset( $_GET['logout'] ) ) {
-		session_destroy();
-		header( 'Location: index.php' );
-		exit;
-	}
-}
+<?php }
 
 function page_foot(): void {
 	echo '</main></body></html>';

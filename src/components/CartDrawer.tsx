@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useCart } from './CartProvider';
 import { formatPrice } from '@/lib/types';
 import { wpImg } from '@/lib/img';
+import FastrrCheckout from './FastrrCheckout';
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
 	const { cart, update, remove } = useCart();
@@ -74,13 +75,11 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 							<span className="text-muted text-[13px]">Subtotal</span>
 							<span className="font-bold">{formatPrice(cart.totals.total_price, cart.totals.currency_symbol, decimals)}</span>
 						</div>
-						<Link
-							href="/checkout"
-							className="block text-center bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] py-4 hover:bg-terracotta-deep transition-colors"
-							onClick={onClose}
-						>
-							Proceed to Checkout
-						</Link>
+						<FastrrCheckout
+							label="Buy Now"
+							subtext="UPI · Cards · COD · Wallets"
+							className="block w-full text-center bg-ink text-ivory text-[11px] font-medium uppercase tracking-[0.18em] py-4 hover:bg-terracotta-deep transition-colors disabled:opacity-60"
+						/>
 					</div>
 				)}
 			</aside>

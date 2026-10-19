@@ -21,7 +21,7 @@ export default function ProductRow({ products, variant = 'card' }: Props) {
 
 	return (
 		<div className="relative">
-			<div className="snap-row flex gap-3 md:gap-4 overflow-x-auto px-1 py-2">
+			<div className="snap-row flex gap-3 md:gap-5 overflow-x-auto py-1">
 				{products.map((p) =>
 					variant === 'watch' ? (
 						<Link

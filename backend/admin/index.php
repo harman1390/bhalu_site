@@ -5,12 +5,21 @@ require __DIR__ . '/_common.php';
 
 $err = '';
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+	csrf_check();
+	// Brute-force throttle: progressive delay after repeated failures.
+	$fails = (int) ( $_SESSION['login_fails'] ?? 0 );
+	if ( $fails >= 5 ) sleep( min( 10, $fails ) );
+
 	$a = admin_cfg();
-	if ( ( $_POST['u'] ?? '' ) === $a['username'] && ( $_POST['p'] ?? '' ) === $a['password'] ) {
-		$_SESSION['bl_admin'] = true;
+	if ( hash_equals( (string) $a['username'], (string) ( $_POST['u'] ?? '' ) )
+		&& hash_equals( (string) $a['password'], (string) ( $_POST['p'] ?? '' ) ) ) {
+		session_regenerate_id( true );
+		$_SESSION['bl_admin']    = true;
+		$_SESSION['login_fails'] = 0;
 		header( 'Location: index.php' );
 		exit;
 	}
+	$_SESSION['login_fails'] = $fails + 1;
 	$err = 'Invalid credentials';
 }
 
@@ -22,6 +31,7 @@ if ( ! is_admin() ) {
 			<div class="logo"><img src="http://localhost:3000/wp-uploads/2026/03/Barelyn-Logo-1-1-1.png" alt="BARELYN"><small>ADMIN PANEL</small></div>
 			<?php if ( $err ) echo "<div class='err' style='margin-top:18px'>$err</div>"; ?>
 			<form method="post" style="margin-top:20px">
+				<?php csrf_field(); ?>
 				<label>Username</label><input type="text" name="u" required autofocus>
 				<label>Password</label><input type="password" name="p" required>
 				<p style="margin-top:22px"><button class="btn" style="width:100%;justify-content:center;padding:11px">Sign in</button></p>

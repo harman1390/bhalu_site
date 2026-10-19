@@ -5,7 +5,6 @@ import { getInstagramPosts } from '@/lib/instagram';
 import { wpImg } from '@/lib/img';
 
 const KNOW_LINKS = [
-	{ label: 'About Us', href: '/shop' },
 	{ label: 'Privacy Policy', href: '/privacy-policy' },
 	{ label: 'Shipping & Delivery', href: '/shipping' },
 	{ label: 'Returns & Refunds', href: '/returns' },

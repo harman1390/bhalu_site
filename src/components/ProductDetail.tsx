@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { WCProduct } from '@/lib/types';
 import { formatPrice } from '@/lib/types';
 import { wpImg } from '@/lib/img';
+import { cleanHtml } from '@/lib/sanitize';
 import { useCart } from './CartProvider';
 
 export default function ProductDetail({ product }: { product: WCProduct }) {
@@ -124,7 +125,7 @@ export default function ProductDetail({ product }: { product: WCProduct }) {
 
 					<div
 						className="mt-5 pb-5 mb-6 border-b border-border text-[15px] leading-[1.8] text-muted"
-						dangerouslySetInnerHTML={{ __html: product.short_description }}
+						dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }}
 					/>
 
 					<div className="flex items-center gap-3 mb-8 flex-wrap">
@@ -200,7 +201,7 @@ export default function ProductDetail({ product }: { product: WCProduct }) {
 					<h2 className="h-display text-[28px] md:text-[34px] text-ink mb-5">The Ritual</h2>
 					<div
 						className="text-[15px] leading-[1.8] text-muted [&>p]:mb-4 [&_li]:mb-2"
-						dangerouslySetInnerHTML={{ __html: product.description }}
+						dangerouslySetInnerHTML={{ __html: cleanHtml(product.description) }}
 					/>
 				</div>
 			)}
