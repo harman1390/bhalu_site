@@ -37,7 +37,7 @@ export default async function HomePage() {
 	return (
 		<>
 			{/* ── HERO — full-bleed editorial ── */}
-			<section className="relative min-h-[70svh] md:min-h-[88svh] flex items-center overflow-hidden">
+			<section className="relative min-h-[70svh] md:min-h-[88svh] flex items-end md:items-center overflow-hidden">
 				<Image
 					src="/wp-uploads/2026/03/2560-by-1244-1-mobile.jpg"
 					unoptimized
@@ -58,28 +58,29 @@ export default async function HomePage() {
 				/>
 				<div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
 				<div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
-				<div className="relative w-full max-w-[1360px] mx-auto px-6 md:px-12 py-24">
+				<div className="relative w-full max-w-[1360px] mx-auto px-6 md:px-12 pt-24 pb-16 md:py-24">
 					<div className="max-w-[640px]">
+						{/* text hidden on phones — image stays the hero, CTAs only */}
 						<p
-							className="eyebrow rise !text-white/70 mb-5 md:mb-6"
+							className="eyebrow rise !text-white/70 mb-5 md:mb-6 hidden md:block"
 							style={{ textShadow: '0 1px 12px rgba(0,0,0,.3)', animationDelay: '0.1s' }}
 						>
 							Clean Skincare · Made in India
 						</p>
 						<h1
-							className="h-display rise text-[38px] md:text-[76px] text-white"
+							className="h-display rise text-[38px] md:text-[76px] text-white hidden md:block"
 							style={{ textShadow: '0 2px 34px rgba(0,0,0,.4)', animationDelay: '0.28s' }}
 						>
 							Skincare, elevated to <em className="font-medium">an art.</em>
 						</h1>
 						<p
-							className="rise mt-5 md:mt-6 text-[15px] md:text-[17px] leading-[1.7] text-white/90 max-w-[440px]"
+							className="rise mt-5 md:mt-6 text-[15px] md:text-[17px] leading-[1.7] text-white/90 max-w-[440px] hidden md:block"
 							style={{ textShadow: '0 1px 18px rgba(0,0,0,.35)', animationDelay: '0.44s' }}
 						>
 							Formulas crafted with intention — quiet, considered and clinically effective for every Indian skin
 							type.
 						</p>
-						<div className="rise mt-8 md:mt-10 flex items-center gap-6 flex-wrap" style={{ animationDelay: '0.6s' }}>
+						<div className="rise mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-5 sm:gap-6" style={{ animationDelay: '0.6s' }}>
 							<Link
 								href="/shop"
 								className="bg-white text-ink text-[12px] font-medium uppercase tracking-[0.18em] px-9 py-4 hover:bg-cream transition-colors"
