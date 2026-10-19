@@ -14,7 +14,7 @@ const KNOW_LINKS = [
 ];
 
 const HELP_LINKS = [
-	{ label: 'Contact Us', href: 'mailto:care@barelyn.co.in' },
+	{ label: 'Contact Us', href: 'mailto:customercare@barelyn.co.in' },
 	{ label: 'My Account', href: '/account' },
 	{ label: 'Cart', href: '/cart' },
 	{ label: 'Shop All', href: '/shop' },
@@ -141,7 +141,7 @@ export default async function SiteFooter() {
 							</svg>
 						</a>
 						<a
-							href="mailto:care@barelyn.co.in"
+							href="mailto:customercare@barelyn.co.in"
 							aria-label="Email"
 							className="w-8 h-8 rounded-full border border-sand bg-white flex items-center justify-center text-muted hover:text-terracotta hover:border-terracotta transition-colors"
 						>
